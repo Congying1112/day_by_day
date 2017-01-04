@@ -1,32 +1,35 @@
 var tasks = [
 	{
-		"name": "task1",
-		"subtasks": [
+		"value": "task1",
+		"open": true,
+		data: [
 			{
-				"name": "subtask1",
-				"subtasks": [
+				"value": "subtask1",
+				"open": true,
+				"data": [
 					{
-						"name": "subtask1_of_subtask1",
+						"value": "subtask1_of_subtask1",
 						"hours_needed": 100,
 						"hours_used": 10
 					},
 					{
-						"name": "subtask2_of_subtask1",
+						"value": "subtask2_of_subtask1",
 						"hours_needed": 200,
 						"hours_used": 20
 					}
 				]
 			},
 			{
-				"name": "subtask2",
-				"subtasks": [
+				"value": "subtask2",
+				"open": true,
+				"data": [
 					{
-						"name": "subtask1_of_subtask2",
+						"value": "subtask1_of_subtask2",
 						"hours_needed": 300,
 						"hours_used": 30
 					},
 					{
-						"name": "subtask2_of_subtask2",
+						"value": "subtask2_of_subtask2",
 						"hours_needed": 400,
 						"hours_used": 40
 					}
@@ -34,4 +37,18 @@ var tasks = [
 			}
 		]
 	}
-]
+];
+var tasks1 = [
+					{ "value":"The Shawshank", "open":true, "data":[
+						{ "name":"1.1", "value":"Part 1", "chapter":"alpha"},
+						{ "name":"1.2", "value":"Part 2", "chapter":"beta", "open":true, "data":[
+							{ "name":"1.2.1", "value":"Part 1", "chapter":"beta-twin"},
+							{ "name":"1.2.2", "value":"Part 1", "chapter":"beta-twin"}
+						]},
+						{ "name":"1.3", "value":"Part 3", "chapter":"gamma" }
+					]},
+					{ "name":"2", "value":"The Godfather", "data":[
+						{ "name":"2.1", "value":"Part 1", "chapter":"alpha" },
+						{ "name":"2.2", "value":"Part 2", "chapter":"beta" }
+					]}
+				]

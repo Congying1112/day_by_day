@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <!-- saved from url=(0069)https://fullcalendar.io/js/fullcalendar-3.1.0/demos/agenda-views.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+body {
+	margin: 40px 10px;
+	padding: 0;
+	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+	font-size: 14px;
+}
+</style>
+
+<link rel="stylesheet" href="./index_files/webix/codebase/webix.css" type="text/css" charset="utf-8">
+<script src="./index_files/webix/codebase/webix.js" type="text/javascript" charset="utf-8"></script>
+<script src="./config/tasks.js"></script>
+<script src="./data/tasks.js"></script>
 
 <link href="./index_files/fullcalendar.min.css" rel="stylesheet">
 <link href="./index_files/fullcalendar.print.min.css" rel="stylesheet" media="print">
 <script src="./index_files/moment.min.js"></script>
 <script src="./index_files/jquery.min.js"></script>
 <script src="./index_files/fullcalendar.min.js"></script>
-<script src="./data/calendar.js"></script>
+<script src="./config/calendar.js"></script>
 <script src="./data/diaries.js"></script>
 <script src="./data/events.js"></script>
-<script src="./data/tasks.js"></script>
 <style>
 	body {
 		margin: 40px 10px;
@@ -33,6 +45,43 @@
 	}
 </style>
 <script>
+	webix.ready(function(){
+		function get_totle_hour(task_data, hour_name){
+			if(task_data.data == undefined) {
+				if (task_data[hour_name] == undefined)
+					task_data[hour_name] = 0;
+			} else if(task_data[hour_name] == undefined){
+				var hour = 0;
+				task_data.data.forEach((subtask)=>{
+					hour += get_totle_hour(subtask, hour_name)
+				});
+				task_data[hour_name] = hour;
+			}
+			else {
+				//
+			}
+			return task_data[hour_name];
+		}
+		function filfull_hours_left(task){
+			if(task.hours_left == undefined) {
+				task.hours_left = task.hours_needed - task.hours_used
+			}
+			if(task.data != undefined) {
+				task.data.forEach((sub_task)=>{
+					filfull_hours_left(sub_task);
+				});
+			}
+		}
+		tasks.forEach((task)=>{
+			get_totle_hour(task, "hours_needed")
+			get_totle_hour(task, "hours_used")
+			filfull_hours_left(task)
+		});
+		tasks_config.container = "tasks"
+		tasks_config.data = tasks
+		grida = webix.ui(tasks_config);	
+	});
+
 	$(document).ready(function() {
 		calendar_config.eventSources = [
 			{
@@ -47,6 +96,14 @@
 </script>
 </head>
 <body>
+<hr>
+TASKS
+<hr>
+<div id="tasks"></div>	
+<hr>
+<hr>
+CALENDER
+<hr>
 <div id='calendar'></div>
 </body>
 </html>
