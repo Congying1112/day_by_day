@@ -7,19 +7,46 @@
 <script src="./index_files/moment.min.js"></script>
 <script src="./index_files/jquery.min.js"></script>
 <script src="./index_files/fullcalendar.min.js"></script>
-<script src="./data/calendar_settings.js"></script>
+<script src="./data/calendar.js"></script>
+<script src="./data/diaries.js"></script>
 <script src="./data/events.js"></script>
 <script src="./data/tasks.js"></script>
+<style>
+	body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+	.day-good {
+    	background-color: green;
+	}
+	.day-bad {
+	    background-color: red;
+	}
+	.day-common{
+	    background-color: blue;
+	}
+</style>
 <script>
 	$(document).ready(function() {
-		console.log(events)
-		console.log(calendar_settings)
-		// calendar_settings.events = events
-		// $('#calendar').fullCalendar(calendar_settings);
+		calendar_config.eventSources = [
+			{
+				events: diaries
+			},
+			{
+				events: events
+			}
+		]
+		$('#calendar').fullCalendar(calendar_config);
 	});
 </script>
 </head>
 <body>
-
+<div id='calendar'></div>
 </body>
 </html>
