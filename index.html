@@ -91,17 +91,28 @@ body {
 		// days
 		var days_summary = {
 			"class": "小计",
-			"total": 0,
-			"used": 0
+			"total_hours": 0,
+			"used_hours": 0
 		}
 		days.forEach((day)=>{
-			filfull_data(day, "left", (data)=>{
-				return data.total - data.used;
+			filfull_data(day, "left_count", (data)=>{
+				return data.total_count - data.used_count;
 			});
-			days_summary.total += day.total
-			days_summary.used += day.used
+
+			filfull_data(day, "total_hours", (data)=>{
+				return data.available_by_unit * data.total_count;
+			});
+			filfull_data(day, "used_hours", (data)=>{
+				return data.available_by_unit * data.used_count;
+			});
+
+			filfull_data(day, "left_hours", (data)=>{
+				return data.total_hours - data.used_hours;
+			});
+			days_summary.total_hours += day.total_hours
+			days_summary.used_hours += day.used_hours
 		});
-		days_summary.left = days_summary.total - days_summary.used
+		days_summary.left_hours = days_summary.total_hours - days_summary.used_hours
 		days.push(days_summary)
 		days_config.container = "days"
 		days_config.data = days
