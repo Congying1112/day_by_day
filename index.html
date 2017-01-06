@@ -17,11 +17,11 @@ body {
 <script src="./data/tasks.js"></script>
 
 <script src="./config/days.js"></script>
-<script src="./data/days.js"></script>
 
 <link href="./index_files/fullcalendar.min.css" rel="stylesheet">
 <link href="./index_files/fullcalendar.print.min.css" rel="stylesheet" media="print">
 <script src="./index_files/moment.min.js"></script>
+<!-- <script src="./index_files/moment-timezone.js"></script> -->
 <script src="./index_files/jquery.min.js"></script>
 <script src="./index_files/fullcalendar.min.js"></script>
 <script src="./config/calendar.js"></script>
@@ -89,6 +89,38 @@ body {
 		grida = webix.ui(tasks_config);	
 
 		// days
+		var today = moment()
+		var last_day = moment("2017-12-31 23:59:59")
+		var one_day = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+		var total_holidays = 0;
+		var used_holidays = 0;
+		var left_holidays = 0;
+		days = [];
+		holidays.forEach((h)=>{
+			h.total_count = h.start_dates.length;
+			total_holidays += h.start_dates.length * h.day_count
+			h.used_count = 0;
+			h.start_dates.forEach((start_day)=>{
+				var end_day = moment(start_day).add(h.day_count-1, 'days');
+				var start_day = moment(start_day);
+				if (start_day.isBefore(today)) {
+					used_holidays += h.day_count;
+					h.used_count++;
+				} else {
+					left_holidays += h.day_count;
+				}
+			})
+		});
+		var left_days = Math.round(Math.abs((last_day - today)/(one_day)));
+		console.log(left_days)
+		days = [{
+			"class": "工作日",
+			"preplan": "20:00-23:00 + 10mins整理",
+			"available_by_unit": 3,
+			"total_count": 366 - total_holidays,
+			"used_count": 366 - total_holidays - (left_days - left_holidays) - 1
+		}].concat(holidays);
+
 		var days_summary = {
 			"class": "小计",
 			"total_hours": 0,
