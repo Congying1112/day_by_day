@@ -3,8 +3,13 @@ var tasks_config = {
 	columns:[
 		{
 			header: "Task Name",
-			width: 350,
+			width: 200,
 			template: "{common.treetable()} #value#"
+		},
+		{
+			id:"plan",
+			header:"Plan",
+			width: 300
 		},
 		{
 			id:"hours_needed",
