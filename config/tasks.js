@@ -9,12 +9,12 @@ var tasks_config = {
 		{
 			id:"plan",
 			header:"Plan",
-			width: 300
+			width: 250
 		},
 		{
 			id:"hours_needed",
 			header:"Hours Needed",
-			width:100
+			width:120
 		},
 		{
 			id:"hours_used",

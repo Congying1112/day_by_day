@@ -1,7 +1,7 @@
 var holidays = [
 	{
 		"class": "周末 2d",
-		"available_by_unit": 6,
+		"available_by_unit": 12,
 		"day_count": 2,
 		"start_dates": ["2017-01-07", "2017-01-14", "2017-01-21",
 			"2017-02-11", "2017-02-18", "2017-02-25",
@@ -19,19 +19,19 @@ var holidays = [
 	},
 	{
 		"class": "小长假 3d",
-		"available_by_unit": 0,
+		"available_by_unit": 12,
 		"day_count": 3,
 		"start_dates": ["2016-12-31", "2017-04-02", "2017-04-29", "2017-05-28"]
 	},
 	{
 		"class": "春节 10d",
-		"available_by_unit": 0,
+		"available_by_unit": 40,
 		"day_count": 10,
 		"start_dates": ["2017-01-26"]
 	},
 	{
 		"class": "中秋国庆 8d",
-		"available_by_unit": 0,
+		"available_by_unit": 32,
 		"day_count": 8,
 		"start_dates": ["2017-10-01"]
 	}
@@ -43,47 +43,38 @@ var days_config = {
 		{
 			id: "class",
 			header: "类别",
-			width: 100
+			width: 200,
+			template: "{common.treetable()} #class#"
 		},
 		{
-			id: "preplan",
-			header: "安排",
+			id: "plan",
+			header: "计划",
 			width: 250
 		},
 		{
-			id:"total_count",
+			id:"total",
 			header:"总数",
-			width:100
+			width: 120
 		},
 		{
-			id:"used_count",
-			header:"已用数量",
-			width:100
+			id:"used",
+			header:"已用",
+			width: 120
 		},
 		{
-			id:"left_count",
-			header:"剩余数量",
-			width:100
+			id:"left",
+			header:"剩余",
+			width: 120
 		},
 		{
-			id:"available_by_unit",
-			header:"单位可用时长",
-			width:100
+			id:"booked",
+			header:"剩余已约",
+			width: 120
 		},
 		{
-			id:"total_hours",
-			header:"总时长",
-			width:100
-		},
-		{
-			id:"used_hours",
-			header:"已用时长",
-			width:100
-		},
-		{
-			id:"left_hours",
-			header:"剩余时长",
-			width:100
+			id:"left_free",
+			header:"剩余可用",
+			width: 120
 		}
 	],
 	autoheight:true,
