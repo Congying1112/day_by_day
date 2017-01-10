@@ -75,9 +75,8 @@ body {
 				});
 			}
 		}
-		var properties_of_days = {
-			"工作日": {"available_hours": 3}
-		};
+		var properties_of_days = {};
+		properties_of_days[workday.class] = {"available_hours": workday.available_hours};
 		holidays.forEach((holiday)=>{
 			properties_of_days[holiday.class] = {"available_hours": holiday.available_hours};
 		});
@@ -205,16 +204,13 @@ body {
 		var left_days = Math.round(Math.abs((last_day - today)/(one_day)));
 		var total_workdays = 366 - total_holidays;
 		var used_workdays = used_days - used_holidays;
-		var booked_workdays = tasks[0].plan == undefined || tasks[0].plan["工作日"] == undefined ? 0 : tasks[0].plan["工作日"] ;
-		days = [{
-			"class": "工作日",
-			"available_hours": properties_of_days["工作日"].available_hours,
-			"total_count": total_workdays,
-			"used_count": used_workdays,
-			"booked_count": booked_workdays,
-			"left_count": total_workdays - used_workdays,
-			"left_free_count": total_workdays - used_workdays - booked_workdays,
-		}].concat(holidays);
+		var booked_workdays = tasks[0].plan == undefined || tasks[0].plan[workday.class] == undefined ? 0 : tasks[0].plan[workday.class];
+		workday["total_count"] = total_workdays;
+		workday["used_count"] = used_workdays;
+		workday["booked_count"] = booked_workdays;
+		workday["left_count"] = total_workdays - used_workdays;
+		workday["left_free_count"] = total_workdays - used_workdays - booked_workdays;
+		days = [workday].concat(holidays);
 		var days_summary = {
 			"class": "All Days",
 			total: 0,
