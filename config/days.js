@@ -1,7 +1,7 @@
 var holidays = [
 	{
-		"class": "周末 2d",
-		"available_by_unit": 12,
+		"class": "周末",
+		"available_hours": 12,
 		"day_count": 2,
 		"start_dates": ["2017-01-07", "2017-01-14", "2017-01-21",
 			"2017-02-11", "2017-02-18", "2017-02-25",
@@ -18,20 +18,20 @@ var holidays = [
 		]
 	},
 	{
-		"class": "小长假 3d",
-		"available_by_unit": 12,
+		"class": "小长假",
+		"available_hours": 12,
 		"day_count": 3,
 		"start_dates": ["2016-12-31", "2017-04-02", "2017-04-29", "2017-05-28"]
 	},
 	{
-		"class": "春节 10d",
-		"available_by_unit": 40,
+		"class": "春节",
+		"available_hours": 40,
 		"day_count": 10,
 		"start_dates": ["2017-01-26"]
 	},
 	{
-		"class": "中秋国庆 8d",
-		"available_by_unit": 32,
+		"class": "中秋国庆",
+		"available_hours": 32,
 		"day_count": 8,
 		"start_dates": ["2017-10-01"]
 	}

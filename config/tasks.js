@@ -7,23 +7,23 @@ var tasks_config = {
 			template: "{common.treetable()} #value#"
 		},
 		{
-			id:"plan",
-			header:"Plan",
-			width: 250
+			id:"remark",
+			header:"Remark",
+			width: 350
 		},
 		{
 			id:"hours_needed",
-			header:"Hours Needed",
+			header:"Planed(h)",
 			width:120
 		},
 		{
 			id:"hours_used",
-			header:"Hours Used",
+			header:"Done(h)",
 			width:100
 		},
 		{
 			id:"hours_left",
-			header:"Hours Left",
+			header:"ToDo(h)",
 			width:100
 		}
 	],

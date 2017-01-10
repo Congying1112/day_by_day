@@ -50,39 +50,75 @@ body {
 </style>
 <script>
 	webix.ready(function(){
-		var one_hour = 60 * 60 * 1000; //minutes*seconds*milliseconds
-		function get_total(data, hour_name){
+		var one_hour = 60 * 60 * 1000;
+		function get_total(data, key, init_val, add_func){
+			init_val = init_val == undefined ? 0 : init_val;
+			add_func = add_func == undefined ? (a, b)=>{return a + b;} : add_func;
+
 			if(data.data == undefined) {
-				if (data[hour_name] == undefined)
-					data[hour_name] = 0;
+				if (data[key] == undefined)
+					data[key] = init_val;
 			} else{
-				var hour = 0;
+				var value = init_val;
 				data.data.forEach((sub_data)=>{
-					hour += get_total(sub_data, hour_name)
+					value = add_func(value, get_total(sub_data, key, init_val, add_func))
 				});
-				data[hour_name] = hour;
+				data[key] = value;
 			}
-			return data[hour_name];
+			return data[key];
 		}
-		function filfull_data(data, col_name, func){
-			if(data[col_name] == undefined) {
-				data[col_name] = func(data)
-			}
+		function filfull_data(data, func){
+			func(data);
 			if(data.data != undefined) {
 				data.data.forEach((sub_data)=>{
-					filfull_data(sub_data, col_name, func);
+					filfull_data(sub_data, func);
 				});
 			}
 		}
+		var properties_of_days = {
+			"工作日": {"available_hours": 3}
+		};
+		holidays.forEach((holiday)=>{
+			properties_of_days[holiday.class] = {"available_hours": holiday.available_hours};
+		});
+
 		// tasks
 		tasks = [{
 			value: "All Tasks",
 			// open: true,
 			data: tasks
 		}];
+		// init
 		tasks.forEach((task)=>{
-			filfull_data(task, "hours_used", (data)=>{
-				return 0;
+			get_total(task, "plan", {}, (plan_a, plan_b)=>{
+				var result = {};
+				for (var key in plan_a) {
+					result[key] = plan_a[key];
+				}
+				for (var key in plan_b) {
+					if (result[key] == undefined) {
+						result[key] = plan_b[key];
+					} else {
+						result[key] += plan_b[key];
+					}
+				}
+				return result;
+			});
+			filfull_data(task, (data)=>{
+				// hours_used
+				data.hours_used = 0;
+				// hours_needed
+				data.hours_needed = 0;
+				var remarks = [];
+				for(var day_class in data.plan) {
+					remarks.push(day_class + " " + data.plan[day_class])
+					if (properties_of_days[day_class] != undefined && properties_of_days[day_class].available_hours != undefined) {
+						data.hours_needed += properties_of_days[day_class].available_hours * data.plan[day_class];
+					}else{
+						alert("wrong day class: " + day_class)
+					};
+				}
+				data.remark = remarks.join(", ")
 			});
 		});
 		for(var key in events){
@@ -112,15 +148,12 @@ body {
 			});
 		}
 		tasks.forEach((task)=>{
-			get_total(task, "hours_needed")
+			// get_total(task, "hours_needed")
 			get_total(task, "hours_used")
-			filfull_data(task, "hours_left", (data)=>{
-				return data.hours_needed - data.hours_used;
+			filfull_data(task, (data)=>{
+				data.hours_left = data.hours_needed - data.hours_used;
 			});
 		});
-		tasks_config.container = "tasks"
-		tasks_config.data = tasks
-		grida = webix.ui(tasks_config);	
 
 		// days
 		var today = moment()
@@ -140,7 +173,7 @@ body {
 						class: start_day,
 						total_count: 1,
 						used_count: used_count,
-						available_by_unit: h.available_by_unit
+						available_hours: h.available_hours
 					});
 				})
 				get_total(h, "total_count");
@@ -149,17 +182,13 @@ body {
 				h.total_count = 1;
 				h.used_count = moment(h.start_day).isBefore(today) ? 1 : 0;
 			}
-			// booked_count
-			filfull_data(h, "booked_count", (data)=>{
-				return days_plan[data.class] == undefined || days_plan[data.class].booked_count == undefined ? 0 : 	days_plan[data.class].booked_count;
-			});
-			// left_count
-			filfull_data(h, "left_count", (data)=>{
-				return data.total_count - data.used_count;
-			});
-			// left_free_count
-			filfull_data(h, "left_free_count", (data)=>{
-				return data.total_count - data.booked_count - data.used_count;
+			filfull_data(h, (data)=>{
+				// booked_count
+				data.booked_count = tasks[0].plan == undefined || tasks[0].plan[data.class] == undefined ? 0 : tasks[0].plan[data.class] ;
+				// left_count
+				data.left_count = data.total_count - data.used_count;
+				// left_free_count
+				data.left_free_count = data.total_count - data.booked_count - data.used_count;
 			});
 
 			// holidays stat
@@ -176,17 +205,16 @@ body {
 		var left_days = Math.round(Math.abs((last_day - today)/(one_day)));
 		var total_workdays = 366 - total_holidays;
 		var used_workdays = used_days - used_holidays;
-		var booked_workdays = days_plan["工作日"] == undefined || days_plan["工作日"].booked_count == undefined ? 0 : 	days_plan["工作日"].booked_count;
+		var booked_workdays = tasks[0].plan == undefined || tasks[0].plan["工作日"] == undefined ? 0 : tasks[0].plan["工作日"] ;
 		days = [{
 			"class": "工作日",
-			"available_by_unit": 3,
+			"available_hours": properties_of_days["工作日"].available_hours,
 			"total_count": total_workdays,
 			"used_count": used_workdays,
 			"booked_count": booked_workdays,
 			"left_count": total_workdays - used_workdays,
 			"left_free_count": total_workdays - used_workdays - booked_workdays,
 		}].concat(holidays);
-		// console.log(days)
 		var days_summary = {
 			"class": "All Days",
 			total: 0,
@@ -195,39 +223,17 @@ body {
 		}
 		days.forEach((day)=>{
 			//
-			filfull_data(day, "total_hours", (data)=>{
-				return data.total_count * data.available_by_unit;
-			});
-			filfull_data(day, "total", (data)=>{
-				return data.total_count + ", " + data.total_hours;
-			});
-			//
-			filfull_data(day, "used_hours", (data)=>{
-				return data.used_count * data.available_by_unit;
-			});
-			filfull_data(day, "used", (data)=>{
-				return data.used_count + ", " + data.used_hours;
-			});
-			//
-			filfull_data(day, "left_hours", (data)=>{
-				return data.left_count * data.available_by_unit;
-			});
-			filfull_data(day, "left", (data)=>{
-				return data.left_count + ", " + data.left_hours;
-			});
-			//
-			filfull_data(day, "booked_hours", (data)=>{
-				return data.booked_count * data.available_by_unit;
-			});
-			filfull_data(day, "booked", (data)=>{
-				return data.booked_count + ", " + data.booked_hours;
-			});
-			//
-			filfull_data(day, "left_free_hours", (data)=>{
-				return data.left_free_count * data.available_by_unit;
-			});
-			filfull_data(day, "left_free", (data)=>{
-				return data.left_free_count + ", " + data.left_free_hours;
+			filfull_data(day, (data)=>{
+				data.total_hours = data.total_count * data.available_hours;
+				data.total = data.total_count + ", " + data.total_hours;
+				data.used_hours = data.used_count * data.available_hours;
+				data.used = data.used_count + ", " + data.used_hours;
+				data.left_hours = data.left_count * data.available_hours;
+				data.left = data.left_count + ", " + data.left_hours;
+				data.booked_hours = data.booked_count * data.available_hours;
+				data.booked = data.booked_count + ", " + data.booked_hours;
+				data.left_free_hours = data.left_free_count * data.available_hours;
+				data.left_free = data.left_free_count + ", " + data.left_free_hours;
 			});
 			//
 			days_summary.total += day.total_hours;
@@ -237,15 +243,22 @@ body {
 		days_summary.left = days_summary.total - days_summary.used;
 		days_summary.left_free = days_summary.left - days_summary.booked;
 		days_summary.data = days;
+
+		// show
+		// tasks
+		tasks_config.container = "tasks"
+		tasks_config.data = tasks
+		grida = webix.ui(tasks_config);	
+		// days_summary
 		// days_summary.open = true;
 		days_config.container = "days";
-		filfull_data(days_summary, "plan", (dd)=>{
+		filfull_data(days_summary, (dd)=>{
 			if (days_plan[dd.class] != undefined && days_plan[dd.class].plan != undefined)
-				return days_plan[dd.class].plan;
+				dd.plan = days_plan[dd.class].plan;
 		});
 		get_total(days_summary, "total_count")
 		days_config.data = [days_summary]
-		grida = webix.ui(days_config);	
+		grida = webix.ui(days_config);
 	});
 
 	$(document).ready(function() {
