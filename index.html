@@ -86,7 +86,7 @@ body {
 		// tasks
 		tasks = [{
 			value: "All Tasks",
-			// open: true,
+			open: true,
 			data: tasks
 		}];
 		// init
@@ -248,7 +248,7 @@ body {
 		tasks_config.data = tasks
 		grida = webix.ui(tasks_config);	
 		// days_summary
-		// days_summary.open = true;
+		days_summary.open = true;
 		days_config.container = "days";
 		filfull_data(days_summary, (dd)=>{
 			if (days_plan[dd.class] != undefined && days_plan[dd.class].plan != undefined)
