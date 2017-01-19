@@ -13,7 +13,7 @@ body {
 <link rel="stylesheet" href="./index_files/webix/codebase/webix.css" type="text/css" charset="utf-8">
 <script src="./index_files/webix/codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 
-<script src="./data/config/page.js"></script>
+<script src="./data/config/project.js"></script>
 
 <script src="./data/config/tasks.js"></script>
 <script src="./data/data/tasks.js"></script>
@@ -260,8 +260,8 @@ body {
 	});
 
 	$(document).ready(function() {
-		page_config.title = page_config.title ? page_config.title +"'s " : "";
-		document.title = page_config.title + "年度余额"
+		var title = (project_config != undefined && project_config.title != undefined) ? project_config.title +"'s " : "";
+		document.title = title + "年度余额"
 		calendar_config.eventSources = []
 		for( var e_key in events) {
 			calendar_config.eventSources.push({
